@@ -1,11 +1,15 @@
 import path from "path";
 
+import svgr from "@svgr/rollup";
 import react from "@vitejs/plugin-react";
+import multi from "rollup-plugin-multi-entry";
 import { defineConfig } from "vite";
 import eslint from "vite-plugin-eslint";
-import svgr from "vite-plugin-svgr";
 
-export default defineConfig(() => {
+import bundlePlugin from "./vite-plugin-bundle";
+
+export default defineConfig(({ mode }) => {
+	const isProduction = mode === "production";
 	return {
 		plugins: [
 			react(),
@@ -32,11 +36,27 @@ export default defineConfig(() => {
 		server: {
 			port: 3000
 		},
-		build: {
-			outDir: "./build",
-			commonjsOptions: { include: [] },
-			sourcemap: false
-		},
+		build: isProduction
+			? {
+					outDir: "./build",
+					sourcemap: false,
+					lib: {
+						entry: path.resolve(__dirname, "src/index.ts"),
+						name: "amazon-location-web-demo",
+						formats: ["cjs", "es", "umd", "iife"]
+					},
+					emptyOutDir: false,
+					minify: "terser",
+					rollupOptions: {
+						input: "src/index.ts",
+						preserveEntrySignatures: "strict",
+						output: {
+							entryFileNames: "[name].js"
+						},
+						plugins: [multi(), bundlePlugin()]
+					}
+			  }
+			: {},
 		optimizeDeps: {
 			disabled: false
 		}

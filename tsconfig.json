@@ -18,8 +18,18 @@
 		"baseUrl": "src",
 		"paths": {
 			"@demo/*": ["*"]
-		}
+		},
+		"declaration": true,
+		"declarationDir": "build/types",
+		"outDir": "build",
 	},
+	 "include": [
+		"src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+		"src/global.d.ts",
+    "types/**/*.d.ts"
+  ],
 	"references": [{ "path": "./tsconfig.node.json" }],
 	"exclude": ["cypress.config.ts"]
 }
